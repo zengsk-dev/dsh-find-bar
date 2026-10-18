@@ -369,6 +369,21 @@ assert(finder.status() === 'empty', 'reports an empty result set');
 finder.search('');
 assert(finder.status() === '', 'clears the result set for an empty query');
 
+// Regression: a text node holding newlines / repeated spaces used to shift the
+// range, because the haystack was whitespace-normalised while the offsets were
+// applied to the raw string. Code blocks are exactly this shape.
+const block = el('pre', text('line one\n    line two\npackage.json  # 包清单 here'));
+chat.appendChild(block);
+finder.search('清单');
+const blockMatches = finder.debugMatches();
+assert(blockMatches.length === 1, 'finds a match inside a multi-line text node');
+const slice = blockMatches[0].node.nodeValue.slice(blockMatches[0].range.startOffset, blockMatches[0].range.endOffset);
+assert(slice === '清单', 'highlight range slices exactly the query (got ' + JSON.stringify(slice) + ')');
+finder.search('two');
+const twoMatches = finder.debugMatches();
+const twoSlice = twoMatches.length === 1 ? twoMatches[0].node.nodeValue.slice(twoMatches[0].range.startOffset, twoMatches[0].range.endOffset) : '<none>';
+assert(twoSlice === 'two', 'match after repeated spaces keeps its offset (got ' + JSON.stringify(twoSlice) + ')');
+
 finder.search('beta');
 const boxes = doc.body.children.filter((child) => child.getAttribute('data-find-bar-highlights') !== null);
 console.log('DEBUG body children after search:', doc.body.children.map((c) => c.tagName + ' attrs=' + JSON.stringify([...c.attributes.keys()])).join(' | '));

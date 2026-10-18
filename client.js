@@ -58,10 +58,6 @@ window.__ModuleLoader__.load({
       return /mac/i.test(raw) ? 'macos' : 'windows';
     }
 
-    function normalize(text) {
-      return String(text).replace(/\s+/g, ' ');
-    }
-
     function installStyles() {
       const id = 'dsh-find-bar-styles';
       const previous = document.getElementById(id);
@@ -236,7 +232,9 @@ window.__ModuleLoader__.load({
 
       function search(rawQuery) {
         clearMatches();
-        const query = normalize(rawQuery);
+        // Match against the raw text node: whitespace must not be normalised,
+        // because the match offsets are also used to slice that same raw string.
+        const query = String(rawQuery == null ? '' : rawQuery);
         if (query.trim().length === 0) {
           notify();
           stopScanners();
@@ -247,7 +245,9 @@ window.__ModuleLoader__.load({
         outer: for (const slot of slots) {
           if (!slot.isConnected) continue;
           for (const node of walk(slot)) {
-            const haystack = normalize(node.nodeValue).toLowerCase();
+            const value = node.nodeValue;
+            if (value.length < needle.length) continue;
+            const haystack = value.toLowerCase();
             if (haystack.indexOf(needle) === -1) continue;
             let from = 0;
             for (;;) {
@@ -255,8 +255,8 @@ window.__ModuleLoader__.load({
               if (at === -1) break;
               try {
                 const range = document.createRange();
-                range.setStart(node, Math.min(at, node.nodeValue.length));
-                range.setEnd(node, Math.min(at + query.length, node.nodeValue.length));
+                range.setStart(node, at);
+                range.setEnd(node, Math.min(at + needle.length, value.length));
                 found.push({ node: node, range: range });
               } catch (error) {
                 break;
@@ -342,6 +342,10 @@ window.__ModuleLoader__.load({
           if (!state) return '';
           if (state.matches.length === 0) return 'empty';
           return state.active + 1 + '/' + state.matches.length;
+        },
+        /** Matches in document order; `range` slices `node.nodeValue`. */
+        debugMatches() {
+          return state ? state.matches.slice() : [];
         },
         subscribe(listener) {
           listeners.add(listener);

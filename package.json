@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-find-bar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Ctrl+F in-page keyword find bar for the DeepSeek Harness Web UI",
   "type": "module",
@@ -15,7 +15,8 @@
     "client.js",
     "cordis.patch.yml",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "deepseek-harness",
