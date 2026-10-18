@@ -1,0 +1,51 @@
+{
+  "name": "@local/dsh-find-bar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ctrl+F in-page keyword find bar for the DeepSeek Harness Web UI",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "cordis",
+    "plugin",
+    "find-in-page",
+    "ctrl-f",
+    "search"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "check": "node --check client.js && node --check index.js",
+    "test": "node test/search-harness.cjs client.js"
+  },
+  "meta": {
+    "title": "Find Bar (Ctrl+F)",
+    "description": "Press Ctrl+F / Cmd+F to search keywords in the current page and jump between matches."
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  }
+}

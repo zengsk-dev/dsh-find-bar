@@ -1,0 +1,4 @@
+# Normalize line endings for a cross-platform plugin repository.
+* text=auto eol=lf
+*.png binary
+*.jpg binary

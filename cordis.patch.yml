@@ -1,0 +1,6 @@
+# Host row for the browser-side find bar. It renders nothing on its own;
+# the Client module below registers the shell.overlay surface and the Ctrl+F key.
+- insert:
+    - id: ui-find-bar
+      name: '@local/dsh-find-bar'
+      config: {}
